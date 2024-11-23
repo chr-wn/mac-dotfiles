@@ -131,7 +131,6 @@
                     },
                     {
                         "description": "Restore Caps Lock as Esc",
-                        "enabled": false,
                         "manipulators": [
                             {
                                 "from": {
