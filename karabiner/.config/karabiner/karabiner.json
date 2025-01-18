@@ -115,6 +115,29 @@
                 "parameters": { "basic.to_if_alone_timeout_milliseconds": 140 },
                 "rules": [
                     {
+                        "description": "Map Ctrl+Space to F6 (change input source) outside Kitty",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^net\\.kovidgoyal\\.kitty$",
+                                            "^dev\\.zed\\.Zed$",
+                                            "^dev.warp.Warp-Stable$"
+                                        ],
+                                        "type": "frontmost_application_unless"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "spacebar",
+                                    "modifiers": { "mandatory": ["control"] }
+                                },
+                                "to": [{ "key_code": "f6" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "Caps Lock to Esc",
                         "enabled": false,
                         "manipulators": [
@@ -143,7 +166,7 @@
                         ]
                     },
                     {
-                        "description": "Caps lock to control; but to escape if alone",
+                        "description": "Caps lock to option; but to escape if alone",
                         "manipulators": [
                             {
                                 "from": {

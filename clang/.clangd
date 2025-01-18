@@ -1,0 +1,12 @@
+CompileFlags:
+  Add:
+    - -isystem/opt/homebrew/Cellar/gcc/14.2.0_1/bin/../lib/gcc/current/gcc/aarch64-apple-darwin24/14/../../../../../../include/c++/14
+    - -isystem/opt/homebrew/Cellar/gcc/14.2.0_1/bin/../lib/gcc/current/gcc/aarch64-apple-darwin24/14/../../../../../../include/c++/14/aarch64-apple-darwin24
+    - -isystem/opt/homebrew/Cellar/gcc/14.2.0_1/bin/../lib/gcc/current/gcc/aarch64-apple-darwin24/14/../../../../../../include/c++/14/backward
+    - -isystem/opt/homebrew/Cellar/gcc/14.2.0_1/bin/../lib/gcc/current/gcc/aarch64-apple-darwin24/14/include
+    - -isystem/opt/homebrew/Cellar/gcc/14.2.0_1/bin/../lib/gcc/current/gcc/aarch64-apple-darwin24/14/include-fixed
+    - -isystem/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include
+    - -isystem/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/System/Library/Frameworks
+    - -std=c++17
+    - -D__float128=double
+

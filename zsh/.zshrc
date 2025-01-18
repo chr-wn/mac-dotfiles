@@ -71,8 +71,54 @@ alias c='clear'
 l() {
   eza --long --all --header --icons --hyperlink -R --level="${1:-1}"
 }
-alias cat='bat'
+# alias cat='bat'
+alias zed="open -na /Applications/Zed.app"
+
+alias dp='python3 ~/code/cp/download_prob.py'
+alias mp='~/code/cp/make_prob.sh'
+
+run_files() {
+  make run TARGET="${1%.*}"
+}
+run_tests() {
+  make test TARGET="${1%.*}"
+}
+run_interactive() {
+  make interactive TARGET="${1%.*}"
+}
+alias rf='run_files'
+alias rt='run_tests'
+alias rtp='rt main.cpp; echo; cat sample1.in; echo; cat sample1.res'
+alias rtm='run_tests main.cpp'
+alias ri='run_interactive'
+alias rip='run_interactive main.cpp'
+
+# https://michaeluloth.com/neovim-switch-configs/
+vv() {
+  # Assumes all configs exist in directories named ~/.config/nvim-*
+  local config=$(find ~/.config -maxdepth 1 -type d -name 'nvim-*' | fzf --prompt="Neovim Configs > " --height=~50% --layout=reverse --border --exit-0)
+  
+  # If I exit fzf without selecting a config, don't open Neovim
+  [[ -z $config ]] && echo "No config selected" && return
+
+  # Open Neovim with the selected config
+  NVIM_APPNAME=$(basename "$config") nvim "$@"
+}
 
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+export JAVA_HOME=$(brew --prefix openjdk@23)
+export PATH=$JAVA_HOME/bin:$PATH
+# Source the Lazyman shell initialization for aliases and nvims selector
+# shellcheck source=.config/nvim-Lazyman/.lazymanrc
+[ -f ~/.config/nvim-Lazyman/.lazymanrc ] && source ~/.config/nvim-Lazyman/.lazymanrc
+# Source the Lazyman .nvimsbind for nvims key binding
+# shellcheck source=.config/nvim-Lazyman/.nvimsbind
+[ -f ~/.config/nvim-Lazyman/.nvimsbind ] && source ~/.config/nvim-Lazyman/.nvimsbind

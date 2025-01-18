@@ -1,0 +1,37 @@
+require "nvchad.mappings"
+
+-- add yours here
+local map = vim.keymap.set
+
+-- Tmux key mappings
+map("n", "<C-h>", "<cmd> TmuxNavigateLeft<CR>", { desc = "Navigate left in tmux" })
+map("n", "<C-l>", "<cmd> TmuxNavigateRight<CR>", { desc = "Navigate right in tmux" })
+map("n", "<C-j>", "<cmd> TmuxNavigateDown<CR>", { desc = "Navigate down in tmux" })
+map("n", "<C-k>", "<cmd> TmuxNavigateUp<CR>", { desc = "Navigate up in tmux" })
+
+-- map leader oe to open finder
+map("n", "<leader>oe", ":!open .<CR>", { desc = "Open Finder" })
+
+local opts = { noremap = true, silent = true }
+
+-- vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev() end, opts)
+-- vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next() end, opts)
+
+-- Open diagnostic float with <leader>df
+map('n', '<leader>df', vim.diagnostic.open_float, opts)
+vim.api.nvim_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+
+-- Add transparency toggle mapping
+map("n", "<leader>tt", function()
+  require("base46").toggle_transparency()
+end, { desc = "Toggle transparency" })
+
+vim.keymap.set('n', 's', '<NOP>')
+vim.keymap.set('x', 's', '<NOP>')
+-- vim.o.timeoutlen = 2000
+-- vim.keymap.set({ "n", "x" }, "s", "<Nop>")
+
+-- map("n", ";", ":", { desc = "CMD enter command mode" })
+-- map("i", "jk", "<ESC>")  -- Uncomment for custom escape mapping
+
+-- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>") -- Save shortcut
