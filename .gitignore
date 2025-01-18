@@ -1,6 +1,8 @@
 karabiner/.config/karabiner/automatic_backups/*
 karabiner/.config/karabiner/assets/*
 
+backup_logs/
+
 .DS_Store
 *.bak
 
