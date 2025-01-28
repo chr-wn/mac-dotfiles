@@ -9,4 +9,5 @@ CompileFlags:
     - -isystem/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/System/Library/Frameworks
     - -std=c++17
     - -D__float128=double
-
+    - -I/Users/charlie/code/cp/templates
+    - -DLOCAL
