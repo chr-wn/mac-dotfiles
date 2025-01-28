@@ -26,8 +26,20 @@ map("n", "<leader>tt", function()
   require("base46").toggle_transparency()
 end, { desc = "Toggle transparency" })
 
-vim.keymap.set('n', 's', '<NOP>')
-vim.keymap.set('x', 's', '<NOP>')
+-- Lua function to extract filename and call the `make` command
+function RunMakeTarget()
+    local file_path = vim.fn.expand('%:p')
+    local file_dir = vim.fn.fnamemodify(file_path, ':h')
+    local file_name = vim.fn.expand('%:t:r')
+    local cmd = string.format("cd %s && make test TARGET=%s", file_dir, file_name)
+    vim.cmd('!' .. cmd)
+end
+
+-- Mapping run file
+map('n', '<leader>rt', ":w<CR>:lua RunMakeTarget()<CR>", { noremap = true, silent = true })
+
+-- vim.keymap.set('n', 's', '<NOP>')
+-- vim.keymap.set('x', 's', '<NOP>')
 -- vim.o.timeoutlen = 2000
 -- vim.keymap.set({ "n", "x" }, "s", "<Nop>")
 
