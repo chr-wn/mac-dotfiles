@@ -77,21 +77,46 @@ alias zed="open -na /Applications/Zed.app"
 alias dp='python3 ~/code/cp/download_prob.py'
 alias mp='~/code/cp/make_prob.sh'
 
-run_files() {
+rf() {
   make run TARGET="${1%.*}"
 }
-run_tests() {
-  make test TARGET="${1%.*}"
+rt() {
+    local target="main"
+    local tests=()
+    
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -t|--target)
+                shift
+                target="${1%.*}"
+                ;;
+            -h|--help)
+                echo "Usage: rt [-t|--target target] [test_cases...]"
+                echo "  -t, --target    Specify target (default: main)"
+                echo "  -h, --help      Show this help"
+                echo "Examples:"
+                echo "  rt sample1              # Run sample1 with main"
+                echo "  rt -t other sample1     # Run sample1 with other target"
+                echo "  rt sample1 sample2      # Run multiple samples"
+                echo "  rt                      # Run all tests with main"
+                return
+                ;;
+            *)
+                tests+=("$1")
+                ;;
+        esac
+        shift
+    done
+
+    if [ ${#tests[@]} -eq 0 ]; then
+        make test TARGET="$target"
+    else
+        make test TARGET="$target" TESTS="${tests[*]}"
+    fi
 }
-run_interactive() {
+ri() {
   make interactive TARGET="${1%.*}"
 }
-alias rf='run_files'
-alias rt='run_tests'
-alias rtp='rt main.cpp; echo; cat sample1.in; echo; cat sample1.res'
-alias rtm='run_tests main.cpp'
-alias ri='run_interactive'
-alias rip='run_interactive main.cpp'
 
 # https://michaeluloth.com/neovim-switch-configs/
 vv() {
