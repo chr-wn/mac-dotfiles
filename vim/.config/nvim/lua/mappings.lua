@@ -10,7 +10,7 @@ map("n", "<C-j>", "<cmd> TmuxNavigateDown<CR>", { desc = "Navigate down in tmux"
 map("n", "<C-k>", "<cmd> TmuxNavigateUp<CR>", { desc = "Navigate up in tmux" })
 
 -- map leader oe to open finder
-map("n", "<leader>oe", ":!open .<CR>", { desc = "Open Finder" })
+map("n", "<leader>fe", ":!open .<CR>", { desc = "Open Finder" })
 
 local opts = { noremap = true, silent = true }
 
