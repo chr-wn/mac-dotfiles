@@ -49,6 +49,7 @@ HISTSIZE=5000
 HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
 HISTDUP=erase
+export HIST_STAMPS=""
 setopt appendhistory
 setopt sharehistory
 setopt hist_ignore_space
@@ -76,6 +77,21 @@ alias zed="open -na /Applications/Zed.app"
 
 alias dp='python3 ~/code/cp/download_prob.py'
 alias mp='~/code/cp/make_prob.sh'
+touch() {
+  if [[ "$1" == "grass" ]]; then
+    echo 
+    echo 
+    echo "\|/          (__)"
+    echo "     \`\\------(oo)"
+    echo "       ||    (__)"
+    echo "       ||w--||     \|/"
+    echo "   \|/"
+    echo 
+    echo 
+  else
+    command touch "$@"
+  fi
+}
 
 rf() {
   make run TARGET="${1%.*}"
