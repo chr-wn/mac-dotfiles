@@ -29,6 +29,17 @@ final_space = true
       style = 'full'
 
   [[blocks.segments]]
+    type = 'python'
+    style = 'plain'
+    foreground = 'green'
+    background = 'transparent'
+    template = ' {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }} {{ .Venv }} {{ end }}{{ .Full }}{{ end }}'
+
+    [blocks.segments.properties]
+      cache_duration = 'none'
+      display_mode = 'environment'
+
+  [[blocks.segments]]
     template = ' {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>'
     foreground = 'p:grey'
     background = 'transparent'
