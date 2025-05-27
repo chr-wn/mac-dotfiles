@@ -5,6 +5,41 @@
                 "parameters": { "basic.to_if_alone_timeout_milliseconds": 140 },
                 "rules": [
                     {
+                        "description": "Clean copied quote in Books.app (Cmd+V, v5 - trim, then remove first/last char)",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^com\\.apple\\.iBooksX$"
+                                        ],
+                                        "type": "frontmost_application_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "v",
+                                    "modifiers": { "mandatory": ["command"] }
+                                },
+                                "to": [{ "shell_command": "pbpaste | perl -0777 -pe 's/Excerpt From.*//si; s/^\\s+//; s/\\s+$//; s/^.//s; s/.$//s;' | pbcopy" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Map Cmd+Shift+C to clean clipboard text in Books.app using sed",
+                        "enabled": false,
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "c",
+                                    "modifiers": { "mandatory": ["command", "shift"] }
+                                },
+                                "to": [{ "shell_command": "pbpaste | sed -E -e 's/^[ ]?[0-9]* //g' | sed -E -e 's/“[ ]?[0-9]?[ ]?//g' | sed -E -e 's/”$//g' | sed -E -e 's/^(Excerpt From).*//g' | pbcopy" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "Map Ctrl+Space to F6 (change input source) outside Kitty",
                         "manipulators": [
                             {
