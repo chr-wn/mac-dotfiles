@@ -11,6 +11,7 @@ map("n", "<C-k>", "<cmd> TmuxNavigateUp<CR>", { desc = "Navigate up in tmux" })
 
 -- map leader oe to open finder
 map("n", "<leader>fe", ":!open .<CR>", { desc = "Open Finder" })
+map("n", "<leader>ce", ":!pwd | pbcopy<CR>", { desc = "Copy Path" })
 
 local opts = { noremap = true, silent = true }
 
