@@ -147,6 +147,96 @@ vv() {
   NVIM_APPNAME=$(basename "$config") nvim "$@"
 }
 
+# ------------------------------------------------------------------------------
+# vd - Creates a high-quality time-lapse video from a source file using FFmpeg.
+# ------------------------------------------------------------------------------
+function vd() {
+  # --- Colors for output ---
+  local C_RED='\033[0;31m'
+  local C_GREEN='\033[0;32m'
+  local C_YELLOW='\033[0;33m'
+  local C_CYAN='\033[0;36m'
+  local C_NONE='\033[0m' # No Color
+
+  # --- Help and Usage Information ---
+  _vd_usage() {
+    echo "Usage: vd ${C_YELLOW}<input_file>${C_NONE} [-s ${C_YELLOW}<rate>${C_NONE}] [-h|--help]"
+    echo ""
+    echo "  Creates a high-quality time-lapse video using FFmpeg."
+    echo ""
+    echo "  Arguments:"
+    echo "    ${C_YELLOW}<input_file>${C_NONE}    The path to the source video file."
+    echo ""
+    echo "  Options:"
+    echo "    -s, --speed ${C_YELLOW}<rate>${C_NONE}  The desired speedup rate (e.g., 60, 120, 240)."
+    echo "                     (Default: 120)"
+    echo "    -h, --help       Display this help and exit."
+    echo ""
+    echo "  Example:"
+    echo "    ${C_CYAN}# Process a video with a 240x speedup${C_NONE}"
+    echo "    vd my_video.mov -s 240"
+    echo ""
+    echo "    ${C_CYAN}# Process a video with the default 120x speedup${C_NONE}"
+    echo "    vd another_video.mov"
+  }
+
+  # --- Argument Parsing ---
+  if [[ "$1" == "-h" || "$1" == "--help" || $# -eq 0 ]]; then
+    _vd_usage
+    return 0
+  fi
+
+  local inputFile="$1"
+  local speedupRate=120 # Default speedup rate
+
+  # Check for the optional speed flag
+  if [[ "$2" == "-s" || "$2" == "--speed" ]]; then
+    # Check if a rate was actually provided after the flag
+    if [[ -n "$3" && "$3" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+      speedupRate="$3"
+    else
+      echo "${C_RED}Error: The '-s' flag requires a numeric speedup rate.${C_NONE}" >&2
+      _vd_usage
+      return 1
+    fi
+  fi
+
+  # --- Pre-flight Checks ---
+  if ! command -v ffmpeg &> /dev/null; then
+    echo "${C_RED}Error: ffmpeg is not installed or not in your PATH.${C_NONE}" >&2
+    echo "Please install ffmpeg to use this function (e.g., 'brew install ffmpeg')." >&2
+    return 1
+  fi
+
+  if [[ ! -f "$inputFile" ]]; then
+    echo "${C_RED}Error: Input file not found: '$inputFile'${C_NONE}" >&2
+    return 1
+  fi
+
+  # --- Filename Generation ---
+  local filenameWithoutExt="${inputFile%.*}"
+  local extension="${inputFile##*.}"
+  local outputFile="${filenameWithoutExt}-${speedupRate}-lapse.${extension}"
+
+  # --- Execution ---
+  echo "${C_CYAN}Processing Video...${C_NONE}"
+  echo "  - ${C_YELLOW}Input File:${C_NONE}   $inputFile"
+  echo "  - ${C_YELLOW}Speedup Rate:${C_NONE} ${speedupRate}x"
+  echo "  - ${C_YELLOW}Output File:${C_NONE}  $outputFile"
+  echo ""
+
+  # The FFmpeg command, with robust quoting
+  ffmpeg -i "$inputFile" -vf "setpts=PTS/${speedupRate}" -c:v libx264 -crf 17 -preset veryslow -r 60 -an "$outputFile"
+
+  # --- Post-flight Check ---
+  if [[ $? -eq 0 ]]; then
+    echo "\n${C_GREEN}✅ Success! Time-lapse saved to '$outputFile'${C_NONE}"
+  else
+    echo "\n${C_RED}❌ Error: FFmpeg failed to process the video.${C_NONE}" >&2
+    return 1
+  fi
+}
+
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
@@ -156,8 +246,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
-export JAVA_HOME=$(brew --prefix openjdk@23)
-export PATH=$JAVA_HOME/bin:$PATH
+# export JAVA_HOME=$(brew --prefix openjdk@23)
+# export PATH=$JAVA_HOME/bin:$PATH
+
 # Source the Lazyman shell initialization for aliases and nvims selector
 # shellcheck source=.config/nvim-Lazyman/.lazymanrc
 [ -f ~/.config/nvim-Lazyman/.lazymanrc ] && source ~/.config/nvim-Lazyman/.lazymanrc
