@@ -147,20 +147,16 @@ vv() {
   NVIM_APPNAME=$(basename "$config") nvim "$@"
 }
 
-# ------------------------------------------------------------------------------
-# vd - Creates a high-quality time-lapse video from a source file using FFmpeg.
-# ------------------------------------------------------------------------------
 function vd() {
-  # --- Colors for output ---
   local C_RED='\033[0;31m'
   local C_GREEN='\033[0;32m'
   local C_YELLOW='\033[0;33m'
   local C_CYAN='\033[0;36m'
-  local C_NONE='\033[0m' # No Color
+  local C_MAGENTA='\033[0;35m'
+  local C_NONE='\033[0m'
 
-  # --- Help and Usage Information ---
   _vd_usage() {
-    echo "Usage: vd ${C_YELLOW}<input_file>${C_NONE} [-s ${C_YELLOW}<rate>${C_NONE}] [-h|--help]"
+    echo "Usage: vd ${C_YELLOW}<input_file>${C_NONE} [-s ${C_YELLOW}<rate>${C_NONE}] [--hw] [-h|--help]"
     echo ""
     echo "  Creates a high-quality time-lapse video using FFmpeg."
     echo ""
@@ -170,41 +166,66 @@ function vd() {
     echo "  Options:"
     echo "    -s, --speed ${C_YELLOW}<rate>${C_NONE}  The desired speedup rate (e.g., 60, 120, 240)."
     echo "                     (Default: 120)"
+    echo "    --hw             ${C_MAGENTA}Use Apple hardware acceleration (VideoToolbox) for a much faster encode.${C_NONE}"
+    echo "                     (Default: Use high-quality x264 software encoder)"
     echo "    -h, --help       Display this help and exit."
     echo ""
     echo "  Example:"
-    echo "    ${C_CYAN}# Process a video with a 240x speedup${C_NONE}"
+    echo "    ${C_CYAN}# Process with 240x speedup using the CPU (high quality)${C_NONE}"
     echo "    vd my_video.mov -s 240"
     echo ""
-    echo "    ${C_CYAN}# Process a video with the default 120x speedup${C_NONE}"
-    echo "    vd another_video.mov"
+    echo "    ${C_CYAN}# Process with default speedup using the Mac's hardware (fast)${C_NONE}"
+    echo "    vd another_video.mov --hw"
   }
 
-  # --- Argument Parsing ---
-  if [[ "$1" == "-h" || "$1" == "--help" || $# -eq 0 ]]; then
+  local inputFile=""
+  local speedupRate=120
+  local useHardware=false
+
+  while (( "$#" )); do
+    case "$1" in
+      -h|--help)
+        _vd_usage
+        return 0
+        ;;
+      -s|--speed)
+        if [[ -n "$2" && "$2" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+          speedupRate="$2"
+          shift 2
+        else
+          echo "${C_RED}Error: '$1' flag requires a numeric speedup rate.${C_NONE}" >&2
+          _vd_usage
+          return 1
+        fi
+        ;;
+      --hw)
+        useHardware=true
+        shift
+        ;;
+      -*)
+        echo "${C_RED}Error: Unknown flag '$1'${C_NONE}" >&2
+        _vd_usage
+        return 1
+        ;;
+      *)
+        if [[ -z "$inputFile" ]]; then
+          inputFile="$1"
+          shift
+        else
+          echo "${C_RED}Error: Multiple input files specified. Please provide only one.${C_NONE}" >&2
+          return 1
+        fi
+        ;;
+    esac
+  done
+
+  if [[ -z "$inputFile" ]]; then
     _vd_usage
     return 0
   fi
-
-  local inputFile="$1"
-  local speedupRate=120 # Default speedup rate
-
-  # Check for the optional speed flag
-  if [[ "$2" == "-s" || "$2" == "--speed" ]]; then
-    # Check if a rate was actually provided after the flag
-    if [[ -n "$3" && "$3" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
-      speedupRate="$3"
-    else
-      echo "${C_RED}Error: The '-s' flag requires a numeric speedup rate.${C_NONE}" >&2
-      _vd_usage
-      return 1
-    fi
-  fi
-
-  # --- Pre-flight Checks ---
+  
   if ! command -v ffmpeg &> /dev/null; then
     echo "${C_RED}Error: ffmpeg is not installed or not in your PATH.${C_NONE}" >&2
-    echo "Please install ffmpeg to use this function (e.g., 'brew install ffmpeg')." >&2
     return 1
   fi
 
@@ -213,26 +234,34 @@ function vd() {
     return 1
   fi
 
-  # --- Filename Generation ---
+  local encoder_opts
+  local output_suffix
+
+  if [[ "$useHardware" == true ]]; then
+    echo "${C_MAGENTA}Mode: Hardware Encoding (Apple VideoToolbox)${C_NONE}"
+    encoder_opts=("-c:v" "h264_videotoolbox" "-b:v" "15M")
+    output_suffix="-${speedupRate}-hw-lapse"
+  else
+    echo "${C_CYAN}Mode: Software Encoding (x264 - veryslow)${C_NONE}"
+    encoder_opts=("-c:v" "libx264" "-crf" "17" "-preset" "veryslow")
+    output_suffix="-${speedupRate}-lapse"
+  fi
+
   local filenameWithoutExt="${inputFile%.*}"
   local extension="${inputFile##*.}"
-  local outputFile="${filenameWithoutExt}-${speedupRate}-lapse.${extension}"
+  local outputFile="${filenameWithoutExt}${output_suffix}.${extension}"
 
-  # --- Execution ---
-  echo "${C_CYAN}Processing Video...${C_NONE}"
   echo "  - ${C_YELLOW}Input File:${C_NONE}   $inputFile"
   echo "  - ${C_YELLOW}Speedup Rate:${C_NONE} ${speedupRate}x"
   echo "  - ${C_YELLOW}Output File:${C_NONE}  $outputFile"
   echo ""
 
-  # The FFmpeg command, with robust quoting
-  ffmpeg -i "$inputFile" -vf "setpts=PTS/${speedupRate}" -c:v libx264 -crf 17 -preset veryslow -r 60 -an "$outputFile"
+  ffmpeg -i "$inputFile" -vf "setpts=PTS/${speedupRate}" "${encoder_opts[@]}" -r 60 -an "$outputFile"
 
-  # --- Post-flight Check ---
   if [[ $? -eq 0 ]]; then
-    echo "\n${C_GREEN}✅ Success! Time-lapse saved to '$outputFile'${C_NONE}"
+    echo "\n${C_GREEN}Success! Time-lapse saved to '$outputFile'${C_NONE}"
   else
-    echo "\n${C_RED}❌ Error: FFmpeg failed to process the video.${C_NONE}" >&2
+    echo "\n${C_RED}Error: FFmpeg failed to process the video.${C_NONE}" >&2
     return 1
   fi
 }
