@@ -266,6 +266,19 @@ function vd() {
   fi
 }
 
+BEATS_PATH="$HOME/dotfiles/beats/beats.sh"
+function b() {
+  if [ ! -x "$BEATS_PATH" ]; then
+    echo "zsh: binaural script not found or not executable at:" >&2
+    echo "     $BEATS_PATH" >&2
+    return 1
+  fi
+  "$BEATS_PATH" "$@"
+}
+function bs() {
+  b stop
+}
+
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
