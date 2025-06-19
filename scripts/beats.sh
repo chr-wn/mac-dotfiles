@@ -89,7 +89,7 @@ done
 
 if [[ -n "$custom_carrier" || -n "$custom_beat" ]]; then
   if [[ -n "$custom_carrier" && -n "$custom_beat" ]]; then
-    final_volume=${custom_volume:-0.7}
+    final_volume=${custom_volume:-0.05}
     launch_new_process "$custom_carrier" "$custom_beat" "$final_volume" "Custom Frequencies"
   else
     echo "Error: You must specify both -f and -b flags together." >&2
@@ -102,15 +102,15 @@ else
 
   case "$PROFILE" in
     1)
-      final_volume=${custom_volume:-0.7}
+      final_volume=${custom_volume:-0.005}
       launch_new_process 174 18 "$final_volume" "p1 (f)"
       ;;
     2)
-      final_volume=${custom_volume:-0.6}
+      final_volume=${custom_volume:-0.004}
       launch_new_process 136.1 10 "$final_volume" "p2 (r)"
       ;;
     3)
-      final_volume=${custom_volume:-0.4}
+      final_volume=${custom_volume:-0.004}
       launch_new_process 90 2.5 "$final_volume" "p3 (s)"
       ;;
     *) 
