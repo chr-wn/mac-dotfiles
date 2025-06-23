@@ -13,6 +13,11 @@ map("n", "<C-k>", "<cmd> TmuxNavigateUp<CR>", { desc = "Navigate up in tmux" })
 map("n", "<leader>fe", ":!open .<CR>", { desc = "Open Finder" })
 map("n", "<leader>ce", ":!pwd | pbcopy<CR>", { desc = "Copy Path" })
 
+-- search files from home
+map("n", "<leader>fc", function()
+  require("telescope.builtin").find_files({ cwd = "~/code/cp" })
+end, { desc = "telescope find cp" })
+
 local opts = { noremap = true, silent = true }
 
 -- vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev() end, opts)
