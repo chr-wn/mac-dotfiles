@@ -5,18 +5,19 @@
                 "parameters": { "basic.to_if_alone_timeout_milliseconds": 140 },
                 "rules": [
                     {
-                        "description": "Ensure Ctrl+Space works in all Kitty windows OR when Quick Access is active",
+                        "description": "Ensure Ctrl+Space works in all Kitty and Warp windows OR when Quick Access is active",
                         "manipulators": [
                             {
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "^net\\.kovidgoyal\\.kitty$"
+                                            "^net\\.kovidgoyal\\.kitty$",
+                                            "^dev\\.warp\\.Warp-Stable$"
                                         ],
                                         "type": "frontmost_application_if"
                                     }
                                 ],
-                                "description": "Pass-through Ctrl+Space in normal Kitty windows",
+                                "description": "Pass-through Ctrl+Space in normal Kitty and Warp windows",
                                 "from": {
                                     "key_code": "spacebar",
                                     "modifiers": { "mandatory": ["left_control"] }
