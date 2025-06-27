@@ -10,8 +10,8 @@ map("n", "<C-j>", "<cmd> TmuxNavigateDown<CR>", { desc = "Navigate down in tmux"
 map("n", "<C-k>", "<cmd> TmuxNavigateUp<CR>", { desc = "Navigate up in tmux" })
 
 -- map leader oe to open finder
-map("n", "<leader>fe", ":!open .<CR>", { desc = "Open Finder" })
-map("n", "<leader>ce", ":!pwd | pbcopy<CR>", { desc = "Copy Path" })
+map("n", "<leader>fe", ":!open .<CR>", { desc = "open finder" })
+map("n", "<leader>ce", ":!pwd | pbcopy<CR>", { desc = "copy dir path" })
 
 -- search files from home
 map("n", "<leader>fc", function()

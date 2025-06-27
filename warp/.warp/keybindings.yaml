@@ -1,3 +1,8 @@
 ---
-"workspace:toggle_ai_assistant": none
 "editor_view:insert_nonexpanding_space": none
+"input:clear_screen": none
+"pane_group:navigate_prev": ctrl-h
+"pane_group:navigate_next": ctrl-l
+"workspace:toggle_ai_assistant": none
+"editor_view:vim_exit_insert_mode": none
+"editor_view:backspace": none
