@@ -109,7 +109,7 @@ main() {
   echo "  - ${C_YELLOW}Output File:${C_NONE}  $outputFile"
   echo ""
 
-  ffmpeg -i "$inputFile" -vf "setpts=PTS/${speedupRate}" "${encoder_opts[@]}" -r 60 -an "$outputFile"
+  ffmpeg -i "$inputFile" -vf "setpts=PTS/${speedupRate}" "${encoder_opts[@]}" -r 240 -an "$outputFile"
 
   if [[ $? -eq 0 ]]; then
     echo "\n${C_GREEN}Success! Time-lapse saved to '$outputFile'${C_NONE}"
