@@ -184,3 +184,4 @@ export NVM_DIR="$HOME/.nvm"
 [ -f ~/.config/nvim-Lazyman/.nvimsbind ] && source ~/.config/nvim-Lazyman/.nvimsbind
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+alias transcribe="~/.transcribe-env/bin/python ~/.transcribe-env/transcribe.py"
