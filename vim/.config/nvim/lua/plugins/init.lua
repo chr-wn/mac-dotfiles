@@ -24,7 +24,11 @@ return {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
-        "clangd"
+        "clangd",
+        "pyright",
+        "black",
+        "isort",
+        "clang-format"
       }
     }
   },
@@ -39,10 +43,36 @@ return {
   },
   {
     "neovim/nvim-lspconfig",
+    dependencies = {
+      "williamboman/mason.nvim",
+    },
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
+      require("nvchad.configs.lspconfig").defaults()
       require "configs.lspconfig"
+      
+      -- Python LSP configuration
+      local lspconfig = require "lspconfig"
+      local nvlsp = require "nvchad.configs.lspconfig"
+
+      lspconfig.pyright.setup {
+        on_attach = nvlsp.on_attach,
+        on_init = nvlsp.on_init,
+        capabilities = nvlsp.capabilities,
+        settings = {
+          python = {
+            analysis = {
+              autoSearchPaths = true,
+              diagnosticMode = "workspace",
+              useLibraryCodeForTypes = true,
+              typeCheckingMode = "basic"
+            }
+          }
+        }
+      }
     end,
   },
+
   {
     'nvim-treesitter/nvim-treesitter',
   	opts = {

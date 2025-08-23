@@ -44,6 +44,36 @@ end
 -- Mapping run file
 map('n', '<leader>rt', ":w<CR>:lua RunMakeTarget()<CR>", { noremap = true, silent = true })
 
+-- Format mappings
+map("n", "<leader>fm", function()
+  require("conform").format()
+end, { desc = "Format file" })
+
+-- LSP format mapping (backup) - only for servers that support formatting
+map("n", "<leader>lf", function()
+  local clients = vim.lsp.get_clients({ bufnr = 0 })
+  local has_formatting = false
+  
+  for _, client in ipairs(clients) do
+    if client.server_capabilities.documentFormattingProvider then
+      has_formatting = true
+      break
+    end
+  end
+  
+  if has_formatting then
+    vim.lsp.buf.format()
+  else
+    -- Fallback to conform if LSP doesn't support formatting
+    require("conform").format()
+  end
+end, { desc = "LSP Format file (with fallback)" })
+
+-- Safe format mapping (isort only)
+map("n", "<leader>fs", function()
+  require("conform").format({ formatters = { "isort" } })
+end, { desc = "Format imports only" })
+
 -- vim.keymap.set('n', 's', '<NOP>')
 -- vim.keymap.set('x', 's', '<NOP>')
 -- vim.o.timeoutlen = 2000
