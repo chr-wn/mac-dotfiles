@@ -32,6 +32,18 @@ map("n", "<leader>tt", function()
   require("base46").toggle_transparency()
 end, { desc = "Toggle transparency" })
 
+-- nvim-ufo folding keymaps
+map('n', 'zR', function() require('ufo').openAllFolds() end, { desc = "Open all folds" })
+map('n', 'zM', function() require('ufo').closeAllFolds() end, { desc = "Close all folds" })
+map('n', 'zr', function() require('ufo').openFoldsExceptKinds() end, { desc = "Open folds except kinds" })
+map('n', 'zm', function() require('ufo').closeFoldsWith() end, { desc = "Close folds with" })
+map('n', 'zK', function()
+  local winid = require('ufo').peekFoldedLinesUnderCursor()
+  if not winid then
+    vim.lsp.buf.hover()
+  end
+end, { desc = "Peek fold or hover" })
+
 -- Lua function to extract filename and call the `make` command
 function RunMakeTarget()
     local file_path = vim.fn.expand('%:p')

@@ -55,10 +55,17 @@ return {
       local lspconfig = require "lspconfig"
       local nvlsp = require "nvchad.configs.lspconfig"
 
+      -- Add folding capabilities for nvim-ufo
+      local capabilities = vim.deepcopy(nvlsp.capabilities)
+      capabilities.textDocument.foldingRange = {
+        dynamicRegistration = false,
+        lineFoldingOnly = true
+      }
+
       lspconfig.pyright.setup {
         on_attach = nvlsp.on_attach,
         on_init = nvlsp.on_init,
-        capabilities = nvlsp.capabilities,
+        capabilities = capabilities,
         settings = {
           python = {
             analysis = {
@@ -97,5 +104,29 @@ return {
     --         },
     --     }
     -- end,
+  },
+
+  -- nvim-ufo for better folding
+  {
+    'kevinhwang91/nvim-ufo',
+    dependencies = {
+      'kevinhwang91/promise-async'
+    },
+    event = "BufReadPost",
+    config = function()
+      -- Using ufo provider need remap `zR` and `zM`
+      vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
+      vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
+      vim.keymap.set('n', 'zr', require('ufo').openFoldsExceptKinds)
+      vim.keymap.set('n', 'zm', require('ufo').closeFoldsWith)
+
+      -- Option 1: coc.nvim as LSP client
+      -- use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
+      require('ufo').setup({
+        provider_selector = function(bufnr, filetype, buftype)
+          return {'treesitter', 'indent'}
+        end
+      })
+    end
   },
 }

@@ -5,6 +5,12 @@ vim.wo.number = true
 
 vim.opt.scrolloff = 3
 
+-- nvim-ufo folding options
+vim.o.foldcolumn = '1' -- '0' is not bad
+vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
+
 -- -- Set 2-space indentation
 -- vim.opt.tabstop = 2        -- Number of spaces that a <Tab> in the file counts for
 -- vim.opt.shiftwidth = 2     -- Number of spaces to use for each step of (auto)indent
