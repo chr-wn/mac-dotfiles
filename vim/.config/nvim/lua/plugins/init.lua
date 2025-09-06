@@ -105,7 +105,7 @@ return {
     --     }
     -- end,
   },
-
+  
   -- nvim-ufo for better folding
   {
     'kevinhwang91/nvim-ufo',
