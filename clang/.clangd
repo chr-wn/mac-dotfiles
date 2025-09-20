@@ -11,3 +11,4 @@ CompileFlags:
     - -D__float128=double
     - -I/Users/charlie/code/cp/templates
     - -DLOCAL
+    - -I/opt/homebrew/opt/opencv/include/opencv4
