@@ -121,6 +121,7 @@
                     },
                     {
                         "description": "Clean copied quote in Books.app (Cmd+V, v5 - trim, then remove first/last char)",
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "conditions": [
