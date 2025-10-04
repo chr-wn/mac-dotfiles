@@ -40,5 +40,21 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Auto-reload kitty config on save
+vim.api.nvim_create_augroup('KittyReload', { clear = true })
+vim.api.nvim_create_autocmd('BufWritePost', {
+  group = 'KittyReload',
+  pattern = { 'kitty.conf', '*.conf' },
+  callback = function()
+    -- Check if the file is actually a kitty config file
+    local filename = vim.fn.expand('%:t')
+    local filepath = vim.fn.expand('%:p')
+    if filename == 'kitty.conf' or filepath:match('kitty.*%.conf$') then
+      vim.fn.system('kill -SIGUSR1 $(pgrep kitty)')
+      vim.notify('Kitty config reloaded!', vim.log.levels.INFO)
+    end
+  end,
+})
+
 -- local o = vim.o
 -- o.cursorlineopt ='both' -- to enable cursorline!

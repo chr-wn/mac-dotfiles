@@ -50,33 +50,6 @@ return {
     config = function()
       require("nvchad.configs.lspconfig").defaults()
       require "configs.lspconfig"
-      
-      -- Python LSP configuration
-      local lspconfig = require "lspconfig"
-      local nvlsp = require "nvchad.configs.lspconfig"
-
-      -- Add folding capabilities for nvim-ufo
-      local capabilities = vim.deepcopy(nvlsp.capabilities)
-      capabilities.textDocument.foldingRange = {
-        dynamicRegistration = false,
-        lineFoldingOnly = true
-      }
-
-      lspconfig.pyright.setup {
-        on_attach = nvlsp.on_attach,
-        on_init = nvlsp.on_init,
-        capabilities = capabilities,
-        settings = {
-          python = {
-            analysis = {
-              autoSearchPaths = true,
-              diagnosticMode = "workspace",
-              useLibraryCodeForTypes = true,
-              typeCheckingMode = "basic"
-            }
-          }
-        }
-      }
     end,
   },
 
@@ -128,5 +101,60 @@ return {
         end
       })
     end
+  },
+
+  -- vim-pencil for prose writing
+  {
+    'preservim/vim-pencil',
+    ft = { 'markdown', 'text', 'tex' },
+    config = function()
+      vim.g['pencil#wrapModeDefault'] = 'soft'   -- default is 'soft' for prose
+      vim.g['pencil#textwidth'] = 80             -- set textwidth for hard mode
+      
+      -- Auto-enable pencil for prose filetypes
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "markdown", "text", "tex" },
+        callback = function()
+          vim.cmd("PencilSoft")  -- Use soft wrap by default
+          -- Turn off line numbers for prose to avoid the mismatch issue
+          -- vim.opt_local.number = false
+          -- vim.opt_local.relativenumber = false
+        end,
+      })
+    end
+  },
+
+  -- zen-mode for distraction-free writing
+  {
+    'folke/zen-mode.nvim',
+    cmd = "ZenMode",
+    opts = {
+      window = {
+        width = 90,
+        options = {
+          number = false,
+          relativenumber = false,
+          cursorline = false,
+          cursorcolumn = false,
+          foldcolumn = "0",
+          list = false,
+        }
+      },
+      plugins = {
+        options = {
+          enabled = true,
+          ruler = false,
+          showcmd = false,
+          laststatus = 0, -- turn off the statusline in zen mode
+        },
+        twilight = { enabled = false }, -- disable twilight (we don't have it)
+        gitsigns = { enabled = false },
+        tmux = { enabled = true }, -- disables the tmux statusline
+        kitty = {
+          enabled = false,
+          font = "+4", -- font size increment
+        },
+      },
+    }
   },
 }

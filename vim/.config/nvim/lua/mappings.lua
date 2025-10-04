@@ -32,6 +32,14 @@ map("n", "<leader>tt", function()
   require("base46").toggle_transparency()
 end, { desc = "Toggle transparency" })
 
+-- Zen mode toggle
+map("n", "<leader>z", "<cmd>ZenMode<CR>", { desc = "Toggle zen mode" })
+
+-- Prose writing mappings
+map("n", "<leader>ps", "<cmd>PencilSoft<CR>", { desc = "Pencil soft wrap mode" })
+map("n", "<leader>ph", "<cmd>PencilHard<CR>", { desc = "Pencil hard wrap mode" })
+map("n", "<leader>pt", "<cmd>PencilToggle<CR>", { desc = "Toggle pencil mode" })
+
 -- nvim-ufo folding keymaps
 map('n', 'zR', function() require('ufo').openAllFolds() end, { desc = "Open all folds" })
 map('n', 'zM', function() require('ufo').closeAllFolds() end, { desc = "Close all folds" })
