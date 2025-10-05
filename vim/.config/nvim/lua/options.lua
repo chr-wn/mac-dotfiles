@@ -5,6 +5,9 @@ vim.wo.number = true
 
 vim.opt.scrolloff = 3
 
+-- Disable space key motion in normal mode (since space is the leader key)
+-- vim.keymap.set('n', '<Space>', '<Nop>', { silent = true })
+
 -- nvim-ufo folding options
 vim.o.foldcolumn = '1' -- '0' is not bad
 vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value

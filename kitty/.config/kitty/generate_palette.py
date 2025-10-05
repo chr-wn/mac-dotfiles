@@ -83,7 +83,7 @@ def setup_venv():
     print("Installing required packages...")
     for req in REQUIREMENTS:
         print(f"Installing {req}...")
-        if not run_command(f"{pip_path} install {req}"):
+        if not run_command(f"{pip_path} install '{req}'"):
             print(f"Failed to install {req}")
             return False
     
@@ -571,15 +571,11 @@ def generate_neovim_theme(colors, theme_name="wallpaper"):
     return "\n".join(config_lines)
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate color palette from wallpaper")
+    parser = argparse.ArgumentParser(description="Generate Kitty color palette from wallpaper")
     parser.add_argument("image_path", nargs='?', help="Path to wallpaper image")
-    parser.add_argument("--output", "-o", help="Output file for kitty config", default="colors-wallpaper.conf")
+    parser.add_argument("--output", "-o", help="Output file for kitty config (in themes/ dir)")
     parser.add_argument("--colors", "-c", type=int, default=16, help="Number of colors to extract")
     parser.add_argument("--setup-only", action="store_true", help="Only setup virtual environment")
-    parser.add_argument("--tmux", action="store_true", help="Generate tmux theme")
-    parser.add_argument("--nvim", action="store_true", help="Generate neovim theme")
-    parser.add_argument("--all", action="store_true", help="Generate all themes (kitty, tmux, nvim)")
-    parser.add_argument("--theme-name", default="wallpaper", help="Theme name for neovim")
     
     args = parser.parse_args()
     
@@ -639,37 +635,18 @@ def main():
             print(f"Raw output: {result}")
             return 1
         
-        # Determine what to generate
-        generate_all = args.all
-        generate_kitty = not (args.tmux or args.nvim) or generate_all
-        generate_tmux_theme = args.tmux or generate_all
-        generate_nvim_theme = args.nvim or generate_all
+        # Generate kitty config only
+        kitty_config = generate_kitty_config(colors)
         
-        generated_files = []
-        
-        # Generate kitty config
-        if generate_kitty:
-            kitty_config = generate_kitty_config(colors)
+        # Determine output path
+        if args.output:
             output_path = Path(args.output)
-            with open(output_path, 'w') as f:
-                f.write(kitty_config)
-            generated_files.append(('Kitty', output_path))
+        else:
+            # Default: save to temp file that will be moved by apply script
+            output_path = Path("_temp_theme.conf")
         
-        # Generate tmux config
-        if generate_tmux_theme:
-            tmux_config = generate_tmux_config(colors)
-            tmux_path = Path("colors-wallpaper.tmux.conf")
-            with open(tmux_path, 'w') as f:
-                f.write(tmux_config)
-            generated_files.append(('Tmux', tmux_path))
-        
-        # Generate neovim theme
-        if generate_nvim_theme:
-            nvim_config = generate_neovim_theme(colors, args.theme_name)
-            nvim_path = Path(f"{args.theme_name}.vim")
-            with open(nvim_path, 'w') as f:
-                f.write(nvim_config)
-            generated_files.append(('Neovim', nvim_path))
+        with open(output_path, 'w') as f:
+            f.write(kitty_config)
         
         print(f"✓ Extracted {len(palette)} colors from wallpaper")
         print(f"✓ Background: {colors['background']}")
@@ -686,24 +663,7 @@ def main():
         for i, color in enumerate(palette[:8]):
             print(f"  {i+1}: {color}")
         
-        print("\nGenerated files:")
-        for theme_type, file_path in generated_files:
-            print(f"  {theme_type}: {file_path}")
-        
-        # Show usage instructions
-        if generate_kitty:
-            print(f"\nKitty: Add to your kitty.conf:")
-            print(f"  include {generated_files[0][1]}")
-        
-        if generate_tmux_theme:
-            tmux_file = next(f[1] for f in generated_files if f[0] == 'Tmux')
-            print(f"\nTmux: Add to your ~/.tmux.conf:")
-            print(f"  source-file ~/{tmux_file}")
-        
-        if generate_nvim_theme:
-            nvim_file = next(f[1] for f in generated_files if f[0] == 'Neovim')
-            print(f"\nNeovim: Copy to ~/.config/nvim/colors/ and add to init.vim:")
-            print(f"  colorscheme {args.theme_name}")
+        print(f"\n✓ Generated: {output_path}")
         
     finally:
         # Clean up temporary script

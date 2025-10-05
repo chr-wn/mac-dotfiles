@@ -58,7 +58,7 @@ return {
   	opts = {
   		ensure_installed = {
   			"vim", "lua", "vimdoc",
-       "html", "css", "cpp", "python"
+       "html", "css", "cpp", "python", "markdown", "markdown_inline"
   		},
     },
     -- dependencies = {
@@ -157,4 +157,136 @@ return {
       },
     }
   },
+
+  -- render-markdown for beautiful markdown rendering
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+    ft = { 'markdown' },
+    opts = {
+      -- Headings with different icons and highlights
+      heading = {
+        enabled = true,
+        sign = true,
+        icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+      },
+      -- Code blocks
+      code = {
+        enabled = true,
+        sign = true,
+        style = 'full',
+        left_pad = 0,
+        right_pad = 0,
+      },
+      -- Bullet points
+      bullet = {
+        enabled = false,
+        -- icons = { '●', '○', '◆', '◇' },
+      },
+      -- Checkboxes
+      checkbox = {
+        enabled = true,
+        unchecked = { icon = '󰄱 ' },
+        checked = { icon = '󰱒 ' },
+      },
+      -- Quotes
+      quote = {
+        enabled = true,
+        icon = '▋',
+      },
+      -- Tables
+      pipe_table = {
+        enabled = true,
+        style = 'full',
+      },
+      -- Callouts (GitHub style)
+      callout = {
+        note = { raw = '[!NOTE]', rendered = '󰋽 Note', highlight = 'RenderMarkdownInfo' },
+        tip = { raw = '[!TIP]', rendered = '󰌶 Tip', highlight = 'RenderMarkdownSuccess' },
+        important = { raw = '[!IMPORTANT]', rendered = '󰅾 Important', highlight = 'RenderMarkdownHint' },
+        warning = { raw = '[!WARNING]', rendered = '󰀪 Warning', highlight = 'RenderMarkdownWarn' },
+        caution = { raw = '[!CAUTION]', rendered = '󰳦 Caution', highlight = 'RenderMarkdownError' },
+      },
+    },
+  },
+
+  -- autolist for automatic list continuation and formatting
+  -- {
+  --   'gaoDean/autolist.nvim',
+  --   ft = { 'markdown', 'text', 'tex' },
+  --   config = function()
+  --     require('autolist').setup()
+      
+  --     -- Keybindings for list manipulation
+  --     vim.keymap.set('i', '<tab>', '<cmd>AutolistTab<cr>')
+  --     vim.keymap.set('i', '<s-tab>', '<cmd>AutolistShiftTab<cr>')
+  --     vim.keymap.set('i', '<CR>', '<CR><cmd>AutolistNewBullet<cr>')
+  --     vim.keymap.set('n', 'o', 'o<cmd>AutolistNewBullet<cr>')
+  --     vim.keymap.set('n', 'O', 'O<cmd>AutolistNewBulletBefore<cr>')
+  --     vim.keymap.set('n', '<CR>', '<cmd>AutolistToggleCheckbox<cr><CR>')
+  --     vim.keymap.set('n', '<C-r>', '<cmd>AutolistRecalculate<cr>')
+      
+  --     -- Cycle list types with <C-t>
+  --     vim.keymap.set('n', '<C-t>', '<cmd>AutolistCycleNext<cr>')
+  --     -- vim.keymap.set('n', '<C-d>', '<cmd>AutolistCyclePrev<cr>')
+      
+  --     -- Move list items up/down
+  --     vim.keymap.set('n', '<<', '<<<cmd>AutolistRecalculate<cr>')
+  --     vim.keymap.set('n', '>>', '>><cmd>AutolistRecalculate<cr>')
+  --     vim.keymap.set('n', 'dd', 'dd<cmd>AutolistRecalculate<cr>')
+  --     vim.keymap.set('v', 'd', 'd<cmd>AutolistRecalculate<cr>')
+  --   end,
+  -- },
+
+  -- bullets.vim for automatic bullet list formatting
+  {
+    'dkarter/bullets.vim',
+    ft = { 'markdown', 'text', 'gitcommit', 'scratch' },
+    config = function()
+      vim.g.bullets_enabled_file_types = {
+        'markdown',
+        'text',
+        'gitcommit',
+        'scratch'
+      }
+      -- Disable default key mappings (we'll set them manually)
+      vim.g.bullets_set_mappings = 0
+      -- Enable renumbering of ordered lists
+      vim.g.bullets_renumber_on_change = 1
+      -- Enable nested bullets
+      vim.g.bullets_nested_checkboxes = 1
+      -- Checkbox symbols
+      vim.g.bullets_checkbox_markers = ' .oOX'
+      
+      -- Set up keymaps manually for better control
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "markdown", "text", "gitcommit", "scratch" },
+        callback = function()
+          local opts = { buffer = true, silent = true }
+          
+          -- Insert mode mappings
+          vim.keymap.set('i', '<CR>', '<Plug>(bullets-newline)', opts)
+          vim.keymap.set('i', '<C-CR>', '<CR>', opts)  -- Ctrl+Enter for regular newline
+          
+          -- Indent/dedent in insert mode
+          vim.keymap.set('i', '<C-t>', '<Plug>(bullets-demote)', opts)
+          vim.keymap.set('i', '<C-d>', '<Plug>(bullets-promote)', opts)
+          
+          -- Normal mode mappings
+          vim.keymap.set('n', 'o', '<Plug>(bullets-newline)', opts)
+          
+          -- Visual mode indent/dedent
+          vim.keymap.set('v', '>', '<Plug>(bullets-demote)', opts)
+          vim.keymap.set('v', '<', '<Plug>(bullets-promote)', opts)
+          
+          -- Checkbox toggle
+          vim.keymap.set('n', '<leader>x', '<Plug>(bullets-toggle-checkbox)', opts)
+          
+          -- Renumber
+          vim.keymap.set('n', '<leader>rn', ':RenumberList<CR>', opts)
+        end,
+      })
+    end
+  },
+
 }

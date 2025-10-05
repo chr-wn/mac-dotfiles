@@ -103,3 +103,5 @@ end, { desc = "Format imports only" })
 -- map("i", "jk", "<ESC>")  -- Uncomment for custom escape mapping
 
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>") -- Save shortcut
+
+vim.keymap.set('n', '<leader>mr', '<cmd>RenderMarkdown toggle<cr>', { desc = 'Toggle Markdown Rendering' })
