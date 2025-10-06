@@ -269,8 +269,8 @@ return {
           vim.keymap.set('i', '<C-CR>', '<CR>', opts)  -- Ctrl+Enter for regular newline
           
           -- Indent/dedent in insert mode
-          vim.keymap.set('i', '<C-t>', '<Plug>(bullets-demote)', opts)
-          vim.keymap.set('i', '<C-d>', '<Plug>(bullets-promote)', opts)
+          -- vim.keymap.set('i', '<C-]>', '<Plug>(bullets-demote)', opts)
+          -- vim.keymap.set('i', '<C-[>', '<Plug>(bullets-promote)', opts)
           
           -- Normal mode mappings
           vim.keymap.set('n', 'o', '<Plug>(bullets-newline)', opts)
@@ -280,7 +280,7 @@ return {
           vim.keymap.set('v', '<', '<Plug>(bullets-promote)', opts)
           
           -- Checkbox toggle
-          vim.keymap.set('n', '<leader>x', '<Plug>(bullets-toggle-checkbox)', opts)
+          vim.keymap.set('n', '<leader>x', '<Plug> bullets-toggle-checkbox', opts)
           
           -- Renumber
           vim.keymap.set('n', '<leader>rn', ':RenumberList<CR>', opts)
