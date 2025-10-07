@@ -41,4 +41,5 @@ local servers = {
 for server, config in pairs(servers) do
   local final_config = vim.tbl_deep_extend("force", common_config, config)
   vim.lsp.config[server] = final_config
+  vim.lsp.enable(server)
 end
