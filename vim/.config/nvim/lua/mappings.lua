@@ -33,7 +33,7 @@ map("n", "<leader>tt", function()
 end, { desc = "Toggle transparency" })
 
 -- Zen mode toggle
-map("n", "<leader>z", "<cmd>ZenMode<CR>", { desc = "Toggle zen mode" })
+-- map("n", "<leader>z", "<cmd>ZenMode<CR>", { desc = "Toggle zen mode" })
 
 -- Prose writing mappings
 map("n", "<leader>ps", "<cmd>PencilSoft<CR>", { desc = "Pencil soft wrap mode" })
