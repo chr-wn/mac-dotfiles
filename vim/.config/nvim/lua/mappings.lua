@@ -13,10 +13,44 @@ map("n", "<C-k>", "<cmd> TmuxNavigateUp<CR>", { desc = "Navigate up in tmux" })
 map("n", "<leader>fe", ":!open .<CR>", { desc = "open finder" })
 map("n", "<leader>ce", ":!pwd | pbcopy<CR>", { desc = "copy dir path" })
 
--- search files from home
+-- search files from cp
 map("n", "<leader>fc", function()
   require("telescope.builtin").find_files({ cwd = "~/code/cp" })
 end, { desc = "telescope find cp" })
+
+map("n", "<leader>fs", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "Find document symbols" })
+
+-- go to void solve() in cpp files
+map("n", "gs", function()
+  if not pcall(require, "nvim-treesitter.parsers") or not vim.api.nvim_buf_is_loaded(0) then
+    return
+  end
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  if lang ~= "cpp" then
+    return
+  end
+  local query = vim.treesitter.query.parse("cpp", [[
+    (function_definition
+      declarator: (function_declarator
+        declarator: (identifier) @solve.func
+      )
+      (#eq? @solve.func "solve")
+    )
+  ]])
+  local root = vim.treesitter.get_parser():parse()[1]:root()
+  for id, node in query:iter_captures(root, 0) do
+    local row, col = node:start()
+    vim.api.nvim_win_set_cursor(0, { row + 1, col })
+    vim.cmd("normal! zz") -- center
+    return
+  end
+  print("Solve function not found by Treesitter")
+end, { desc = "go to `void solve()` (treesitter)" })
+
+
+
+
+
 
 local opts = { noremap = true, silent = true }
 
@@ -69,30 +103,30 @@ map("n", "<leader>fm", function()
   require("conform").format()
 end, { desc = "Format file" })
 
--- LSP format mapping (backup) - only for servers that support formatting
-map("n", "<leader>lf", function()
-  local clients = vim.lsp.get_clients({ bufnr = 0 })
-  local has_formatting = false
-  
-  for _, client in ipairs(clients) do
-    if client.server_capabilities.documentFormattingProvider then
-      has_formatting = true
-      break
-    end
-  end
-  
-  if has_formatting then
-    vim.lsp.buf.format()
-  else
-    -- Fallback to conform if LSP doesn't support formatting
-    require("conform").format()
-  end
-end, { desc = "LSP Format file (with fallback)" })
+-- -- LSP format mapping (backup) - only for servers that support formatting
+-- map("n", "<leader>lf", function()
+--   local clients = vim.lsp.get_clients({ bufnr = 0 })
+--   local has_formatting = false
+--   
+--   for _, client in ipairs(clients) do
+--     if client.server_capabilities.documentFormattingProvider then
+--       has_formatting = true
+--       break
+--     end
+--   end
+--   
+--   if has_formatting then
+--     vim.lsp.buf.format()
+--   else
+--     -- Fallback to conform if LSP doesn't support formatting
+--     require("conform").format()
+--   end
+-- end, { desc = "LSP Format file (with fallback)" })
 
--- Safe format mapping (isort only)
-map("n", "<leader>fs", function()
-  require("conform").format({ formatters = { "isort" } })
-end, { desc = "Format imports only" })
+-- -- Safe format mapping (isort only)
+-- map("n", "<leader>fs", function()
+--   require("conform").format({ formatters = { "isort" } })
+-- end, { desc = "Format imports only" })
 
 -- vim.keymap.set('n', 's', '<NOP>')
 -- vim.keymap.set('x', 's', '<NOP>')
